@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
           .map((e) => ProductModel.fromJson(e))
           .toList();
 
-      // Enregistre dans SQLite
       final provider = Provider.of<ProductProvider>(context, listen: false);
 
       for (var p in products) {
