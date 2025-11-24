@@ -1,9 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:offline_shop/data/models/product_model.dart';
 import 'package:offline_shop/presentation/pages/cart_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:offline_shop/providers/product_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,12 +24,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<List<ProductModel>> fetchProduct() async {
     final url = Uri.parse("https://fakestoreapi.com/products");
-
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
-      return data.map((e) => ProductModel.fromJson(e)).toList();
+      final List<ProductModel> products = data
+          .map((e) => ProductModel.fromJson(e))
+          .toList();
+
+      // Enregistre dans SQLite
+      final provider = Provider.of<ProductProvider>(context, listen: false);
+
+      for (var p in products) {
+        await provider.addProduct(
+          p.id,
+          p.title,
+          p.price,
+          p.description,
+          p.image,
+          p.category,
+        );
+      }
+
+      return products;
     } else {
       throw Exception("Erreur de chargement");
     }
@@ -135,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     );
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     "Ajouter au panier",
                                     style: TextStyle(color: Colors.white),
                                   ),

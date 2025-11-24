@@ -3,7 +3,6 @@ import '../services/database_service.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<Map<String, dynamic>> products = [];
-
   final db = DatabaseService.instance;
 
   Future<void> loadProducts() async {
@@ -22,10 +21,12 @@ class ProductProvider extends ChangeNotifier {
     await db.insertProduct({
       'id': id,
       'title': title,
+      'price': price,
       'description': description,
       'category': category,
       'image': image,
     });
+
     await loadProducts();
   }
 }

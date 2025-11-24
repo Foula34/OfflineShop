@@ -17,30 +17,33 @@ class DatabaseService {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE product(
-      id INTEGER PRIMARY KEY;
-      title TEXT NOT NULL,
-      price REAL NOT NULL,
-      description TEXT NOT NULL,
-      category TEXT NOT NULL,
-      image TEXT NOT NULL
-
+      CREATE TABLE products(
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        price REAL NOT NULL,
+        description TEXT NOT NULL,
+        category TEXT NOT NULL,
+        image TEXT NOT NULL
       )
     ''');
   }
 
   Future<int> insertProduct(Map<String, Object?> data) async {
     final db = await database;
-    return db.insert('products', data);
+    return await db.insert(
+      'products',
+      data,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<List<Map<String, Object?>>> getProducts() async {
     final db = await database;
-    return db.query('products');
+    return await db.query('products');
   }
 }
