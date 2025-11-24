@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:offline_shop/presentation/pages/home_screen.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
   runApp(const MyApp());
 }
 
