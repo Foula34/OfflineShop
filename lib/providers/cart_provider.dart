@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../data/models/cart_item_model.dart';
 import '../services/database_service.dart';
+import '../services/image_cache_service.dart';
 
 class CartProvider extends ChangeNotifier {
   List<CartItemModel> _cartItems = [];
   final db = DatabaseService.instance;
+  final imageCache = ImageCacheService.instance;
 
   List<CartItemModel> get cartItems => _cartItems;
 
@@ -29,8 +31,9 @@ class CartProvider extends ChangeNotifier {
     int productId,
     String title,
     double price,
-    String image,
-  ) async {
+    String image, {
+    String? localImagePath,
+  }) async {
     try {
       final existingItem = await db.getCartItemByProductId(productId);
 
@@ -38,11 +41,18 @@ class CartProvider extends ChangeNotifier {
         final currentQuantity = existingItem['quantity'] as int;
         await db.updateCartItemQuantity(productId, currentQuantity + 1);
       } else {
+        // Télécharger l'image si elle n'existe pas localement
+        String? imagePath = localImagePath;
+        if (imagePath == null || imagePath.isEmpty) {
+          imagePath = await imageCache.downloadAndSaveImage(image, productId);
+        }
+
         await db.insertCartItem({
           'productId': productId,
           'title': title,
           'price': price,
           'image': image,
+          'localImagePath': imagePath,
           'quantity': 1,
         });
       }

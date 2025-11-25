@@ -3,7 +3,8 @@ class CartItemModel {
   final int productId;
   final String title;
   final double price;
-  final String image;
+  final String image; // URL originale
+  final String? localImagePath; // Chemin local
   final int quantity;
 
   CartItemModel({
@@ -12,6 +13,7 @@ class CartItemModel {
     required this.title,
     required this.price,
     required this.image,
+    this.localImagePath,
     required this.quantity,
   });
 
@@ -22,6 +24,7 @@ class CartItemModel {
       title: json['title'] as String,
       price: (json['price'] as num).toDouble(),
       image: json['image'] as String,
+      localImagePath: json['localImagePath'] as String?,
       quantity: json['quantity'] as int,
     );
   }
@@ -33,6 +36,7 @@ class CartItemModel {
       'title': title,
       'price': price,
       'image': image,
+      'localImagePath': localImagePath,
       'quantity': quantity,
     };
   }
@@ -43,6 +47,7 @@ class CartItemModel {
     String? title,
     double? price,
     String? image,
+    String? localImagePath,
     int? quantity,
   }) {
     return CartItemModel(
@@ -51,7 +56,14 @@ class CartItemModel {
       title: title ?? this.title,
       price: price ?? this.price,
       image: image ?? this.image,
+      localImagePath: localImagePath ?? this.localImagePath,
       quantity: quantity ?? this.quantity,
     );
   }
+
+  // Méthode pour obtenir l'image à afficher
+  String get displayImage => localImagePath ?? image;
+
+  bool get hasLocalImage =>
+      localImagePath != null && localImagePath!.isNotEmpty;
 }

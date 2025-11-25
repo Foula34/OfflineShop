@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../data/models/product_model.dart';
 import '../services/database_service.dart';
+import '../services/image_cache_service.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<ProductModel> _products = [];
   final db = DatabaseService.instance;
+  final imageCache = ImageCacheService.instance;
   bool _isLoading = false;
 
   List<ProductModel> get products => _products;
@@ -36,6 +38,9 @@ class ProductProvider extends ChangeNotifier {
     String category,
   ) async {
     try {
+      // Télécharger l'image
+      final localImagePath = await imageCache.downloadAndSaveImage(image, id);
+
       await db.insertProduct({
         'id': id,
         'title': title,
@@ -43,6 +48,7 @@ class ProductProvider extends ChangeNotifier {
         'description': description,
         'category': category,
         'image': image,
+        'localImagePath': localImagePath,
       });
 
       await loadProducts();
@@ -54,6 +60,12 @@ class ProductProvider extends ChangeNotifier {
   Future<void> addProducts(List<ProductModel> products) async {
     try {
       for (var product in products) {
+        // Télécharger l'image de chaque produit
+        final localImagePath = await imageCache.downloadAndSaveImage(
+          product.image,
+          product.id,
+        );
+
         await db.insertProduct({
           'id': product.id,
           'title': product.title,
@@ -61,9 +73,11 @@ class ProductProvider extends ChangeNotifier {
           'description': product.description,
           'category': product.category,
           'image': product.image,
+          'localImagePath': localImagePath,
         });
       }
       await loadProducts();
+      print('✅ ${products.length} produits ajoutés avec images');
     } catch (e) {
       print('Erreur lors de l\'ajout des produits: $e');
     }
@@ -77,5 +91,20 @@ class ProductProvider extends ChangeNotifier {
     } catch (e) {
       print('Erreur lors de la suppression des produits: $e');
     }
+  }
+
+  // Nouvelle méthode pour nettoyer le cache d'images
+  Future<void> clearImageCache() async {
+    try {
+      await imageCache.clearAllImages();
+      print('✅ Cache d\'images nettoyé');
+    } catch (e) {
+      print('Erreur lors du nettoyage du cache: $e');
+    }
+  }
+
+  // Méthode pour obtenir la taille du cache
+  Future<double> getCacheSizeMB() async {
+    return await imageCache.getCacheSizeMB();
   }
 }

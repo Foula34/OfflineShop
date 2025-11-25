@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:offline_shop/data/models/product_model.dart';
+import 'package:offline_shop/presentations/widgets/cached_image_widget.dart';
 import 'package:offline_shop/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -27,14 +28,10 @@ class ProductDetailScreen extends StatelessWidget {
               height: 300,
               width: double.infinity,
               color: Colors.white,
-              child: Image.network(
-                product.image,
+              child: CachedImageWidget(
+                localImagePath: product.localImagePath,
+                networkImageUrl: product.image,
                 fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Center(
-                    child: Icon(Icons.broken_image, size: 100),
-                  );
-                },
               ),
             ),
             Padding(
@@ -167,6 +164,7 @@ class ProductDetailScreen extends StatelessWidget {
                         product.title,
                         product.price,
                         product.image,
+                        localImagePath: product.localImagePath,
                       );
 
                       if (context.mounted) {

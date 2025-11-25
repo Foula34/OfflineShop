@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:offline_shop/presentations/widgets/cached_image_widget.dart';
 import 'package:offline_shop/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -136,14 +137,12 @@ class CartScreen extends StatelessWidget {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: Image.network(
-                                  item.image,
+                                child: CachedImageWidget(
+                                  localImagePath: item.localImagePath,
+                                  networkImageUrl: item.image,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Center(
-                                      child: Icon(Icons.broken_image),
-                                    );
-                                  },
+                                  width: 80,
+                                  height: 80,
                                 ),
                               ),
                             ),

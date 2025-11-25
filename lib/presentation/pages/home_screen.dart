@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:offline_shop/data/models/product_model.dart';
 import 'package:offline_shop/presentation/pages/cart_screen.dart';
 import 'package:offline_shop/presentation/pages/product_detail_screen.dart';
+import 'package:offline_shop/presentations/widgets/cached_image_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:offline_shop/providers/product_provider.dart';
 import 'package:offline_shop/providers/cart_provider.dart';
@@ -244,14 +245,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(10),
                                 ),
-                                child: Image.network(
-                                  product.image,
+                                child: CachedImageWidget(
+                                  localImagePath: product.localImagePath,
+                                  networkImageUrl: product.image,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Center(
-                                      child: Icon(Icons.broken_image, size: 50),
-                                    );
-                                  },
                                 ),
                               ),
                             ),
@@ -304,6 +301,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   product.title,
                                                   product.price,
                                                   product.image,
+                                                  localImagePath:
+                                                      product.localImagePath,
                                                 );
 
                                                 if (mounted) {

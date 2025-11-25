@@ -19,7 +19,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3, // ⚠️ Version incrémentée pour la migration
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -33,7 +33,8 @@ class DatabaseService {
         price REAL NOT NULL,
         description TEXT NOT NULL,
         category TEXT NOT NULL,
-        image TEXT NOT NULL
+        image TEXT NOT NULL,
+        localImagePath TEXT
       )
     ''');
 
@@ -44,6 +45,7 @@ class DatabaseService {
         title TEXT NOT NULL,
         price REAL NOT NULL,
         image TEXT NOT NULL,
+        localImagePath TEXT,
         quantity INTEGER NOT NULL,
         UNIQUE(productId)
       )
@@ -63,6 +65,23 @@ class DatabaseService {
           UNIQUE(productId)
         )
       ''');
+    }
+
+    // Migration pour ajouter la colonne localImagePath
+    if (oldVersion < 3) {
+      try {
+        await db.execute('ALTER TABLE products ADD COLUMN localImagePath TEXT');
+        print('✅ Colonne localImagePath ajoutée à products');
+      } catch (e) {
+        print('⚠️ Colonne localImagePath existe déjà dans products');
+      }
+
+      try {
+        await db.execute('ALTER TABLE cart ADD COLUMN localImagePath TEXT');
+        print('✅ Colonne localImagePath ajoutée à cart');
+      } catch (e) {
+        print('⚠️ Colonne localImagePath existe déjà dans cart');
+      }
     }
   }
 
@@ -86,6 +105,19 @@ class DatabaseService {
     return await db.delete('products');
   }
 
+  Future<int> updateProductImagePath(
+    int productId,
+    String localImagePath,
+  ) async {
+    final db = await database;
+    return await db.update(
+      'products',
+      {'localImagePath': localImagePath},
+      where: 'id = ?',
+      whereArgs: [productId],
+    );
+  }
+
   // Cart methods
   Future<int> insertCartItem(Map<String, Object?> data) async {
     final db = await database;
@@ -106,6 +138,19 @@ class DatabaseService {
     return await db.update(
       'cart',
       {'quantity': quantity},
+      where: 'productId = ?',
+      whereArgs: [productId],
+    );
+  }
+
+  Future<int> updateCartItemImagePath(
+    int productId,
+    String localImagePath,
+  ) async {
+    final db = await database;
+    return await db.update(
+      'cart',
+      {'localImagePath': localImagePath},
       where: 'productId = ?',
       whereArgs: [productId],
     );
