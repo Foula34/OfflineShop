@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:offline_shop/presentation/pages/home_screen.dart';
+import 'package:offline_shop/providers/cart_provider.dart';
 import 'package:offline_shop/providers/product_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +9,10 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ProductProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -23,6 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Offline Shop',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
       ),
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
