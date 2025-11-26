@@ -252,93 +252,95 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      product.title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, top: 16.0, right: 16.0, bottom: 6.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.title,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    product.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '\$${product.price.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '\$${product.price.toStringAsFixed(2)}',
-                                          style: const TextStyle(
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        Consumer<CartProvider>(
-                                          builder: (context, cartProvider, child) {
-                                            final isInCart = cartProvider
-                                                .isInCart(product.id);
-                                            return IconButton(
-                                              icon: Icon(
-                                                isInCart
-                                                    ? Icons.shopping_cart
-                                                    : Icons.add_shopping_cart,
-                                                color: isInCart
-                                                    ? Colors.green
-                                                    : Colors.blue,
-                                              ),
-                                              onPressed: () async {
-                                                await cartProvider.addToCart(
-                                                  product.id,
-                                                  product.title,
-                                                  product.price,
-                                                  product.image,
-                                                  localImagePath:
-                                                      product.localImagePath,
-                                                );
-
-                                                if (mounted) {
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        '${product.title} ajouté au panier',
-                                                      ),
-                                                      duration: const Duration(
-                                                        seconds: 2,
-                                                      ),
-                                                      action: SnackBarAction(
-                                                        label: 'Voir',
-                                                        onPressed: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const CartScreen(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
+                                      Consumer<CartProvider>(
+                                        builder: (context, cartProvider, child) {
+                                          final isInCart = cartProvider
+                                              .isInCart(product.id);
+                                          return IconButton(
+                                            icon: Icon(
+                                              isInCart
+                                                  ? Icons.shopping_cart
+                                                  : Icons.add_shopping_cart,
+                                              color: isInCart
+                                                  ? Colors.green
+                                                  : Colors.blue,
+                                            ),
+                                            onPressed: () async {
+                                              await cartProvider.addToCart(
+                                                product.id,
+                                                product.title,
+                                                product.price,
+                                                product.image,
+                                                localImagePath:
+                                                    product.localImagePath,
+                                              );
+                            
+                                              if (mounted) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      '${product.title} ajouté au panier',
                                                     ),
-                                                  );
-                                                }
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                                    duration: const Duration(
+                                                      seconds: 2,
+                                                    ),
+                                                    action: SnackBarAction(
+                                                      label: 'Voir',
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const CartScreen(),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ],
